@@ -1,70 +1,73 @@
 package org.xpathqs.web.selenium.executor
 
-import io.github.bonigarcia.wdm.config.DriverManagerType
-import org.junit.jupiter.api.Assertions.*
+import assertk.assertThat
+import assertk.assertions.isEqualTo
+import assertk.assertions.isNotNull
 import org.junit.jupiter.api.Test
-import org.xpathqs.core.reflection.SelectorParser
-import org.xpathqs.core.selector.Block
-import org.xpathqs.core.selector.extensions.get
-import org.xpathqs.core.selector.extensions.plus
-import org.xpathqs.core.selector.extensions.prefix
-import org.xpathqs.core.selector.extensions.repeat
-import org.xpathqs.core.util.SelectorFactory
-import org.xpathqs.core.util.SelectorFactory.idSelector
-import org.xpathqs.driver.extensions.clear
-import org.xpathqs.driver.extensions.input
-import org.xpathqs.driver.extensions.text
-import org.xpathqs.driver.log.ConsoleLog
-import org.xpathqs.driver.log.Log
+import org.xpathqs.core.util.SelectorFactory.tagSelector
+import org.xpathqs.driver.actions.ClickAction
+import org.xpathqs.driver.actions.WaitAction
+import org.xpathqs.driver.executor.Executor
 import org.xpathqs.web.Page
-import org.xpathqs.web.extensions.submit
-import org.xpathqs.web.factory.HTML
-import org.xpathqs.web.factory.HtmlTags
-import org.xpathqs.web.factory.HtmlTags.DIV
-import org.xpathqs.web.factory.HtmlTags.H3
+import org.xpathqs.web.actions.OpenUrlAction
+import org.xpathqs.web.executor.WebExecutor
 import org.xpathqs.web.selenium.constants.Global
 import org.xpathqs.web.selenium.driver.SeleniumWebDriver
-import org.xpathqs.web.selenium.factory.DriverFactory
+import org.xpathqs.web.selenium.mock.MkWebDriver
 
+class SeleniumExecutorTest {
+    val driver = MkWebDriver()
+    val webDriver = SeleniumWebDriver(driver)
 
-object GoogleSearch: Page(url = "https://www.google.com") {
-    val searchInput = HTML.input(title = "Search")
-    val btnSubmit =  HTML.submit()
+    //MkSeleniumExecutor()
+    val executor = SeleniumExecutor(
+        driver,
+        WebExecutor(
+            webDriver,
+            Executor(
+                webDriver
+            )
+        )
+    )
 
-    fun searchInput(value: String) {
-        searchInput
-            .clear()
-            .input(value)
-            .submit()
-    }
-
-    object Results: Block(idSelector("search") + DIV.prefix("/").repeat(3)) {
-        val lblTitle = H3
-        val lblDesc = DIV[2]
-    }
-}
-
-internal class SeleniumExecutorTest {
-
-    private fun defaultSetup() {
-        val driver = DriverFactory.create(DriverManagerType.CHROME)
-        val executor = SeleniumExecutor(driver, SeleniumWebDriver(driver))
+    init {
         Global.init(executor)
-        Log.init(ConsoleLog())
-        SelectorParser(GoogleSearch).parse()
     }
 
     @Test
-    fun test1() {
-        defaultSetup()
+    fun hasActionHandlerForWaitAction() {
+        assertThat(
+            executor.hasActionHandler(WaitAction())
+        ).isEqualTo(true)
+    }
 
-        GoogleSearch.open()
-        GoogleSearch.searchInput("Wiki")
+    @Test
+    fun hasActionHandlerForOpenUrlAction() {
+        assertThat(
+            executor.hasActionHandler(OpenUrlAction(Page()))
+        ).isEqualTo(true)
+    }
 
-        val s1 = GoogleSearch.Results.lblTitle.text
-        val s2 = GoogleSearch.Results[2].lblTitle.text
+    @Test
+    fun actionHandlerForOpenUrlAction() {
+        assertThat(
+            executor.getActionHandler(OpenUrlAction(Page()))
+        ).isNotNull()
+    }
 
-        println(s1)
-        println(s2)
+    @Test
+    fun hasActionHandlerForClickAction() {
+        assertThat(
+            executor.hasActionHandler(
+                ClickAction(
+                    tagSelector("div")
+                )
+            )
+        ).isEqualTo(true)
+    }
+
+    @Test
+    fun open() {
+        Page("").open()
     }
 }

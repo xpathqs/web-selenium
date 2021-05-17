@@ -2,29 +2,36 @@ package org.xpathqs.web.selenium.executor
 
 import org.openqa.selenium.By
 import org.openqa.selenium.WebDriver
-import org.openqa.selenium.WebElement
+import org.openqa.selenium.support.ui.ExpectedConditions
+import org.openqa.selenium.support.ui.WebDriverWait
 import org.xpathqs.core.selector.base.BaseSelector
 import org.xpathqs.core.selector.base.ISelector
 import org.xpathqs.core.selector.selector.Selector
-import org.xpathqs.driver.actions.ClickAction
-import org.xpathqs.driver.actions.InputAction
-import org.xpathqs.driver.cache.ICache
+import org.xpathqs.driver.actions.WaitForSelectorAction
+import org.xpathqs.driver.actions.WaitForSelectorDisappearAction
 import org.xpathqs.driver.executor.ActionExecMap
-import org.xpathqs.driver.executor.BaseExecutor
-import org.xpathqs.driver.executor.CacheExecutor
-import org.xpathqs.web.driver.IWebDriver
-import org.xpathqs.web.executor.WebExecutor
+import org.xpathqs.driver.executor.Decorator
 import org.xpathqs.web.selenium.constants.Global
 import java.util.concurrent.TimeUnit
 
+
 open class SeleniumExecutor(
-    private val webDriver: WebDriver,
-    driver: IWebDriver
-): WebExecutor (driver) {
+    webDriver: WebDriver,
+    origin: Decorator
+) : SeleniumBaseExecutor(webDriver, origin) {
+
+    override val actions = ActionExecMap().apply {
+        set(WaitForSelectorAction(Selector()).name) {
+            executeAction(it as WaitForSelectorAction)
+        }
+        set(WaitForSelectorDisappearAction(Selector()).name) {
+            executeAction(it as WaitForSelectorDisappearAction)
+        }
+    }
 
     override fun getAttr(selector: BaseSelector, attr: String): String {
         val elem = selector.webElement
-        return if(attr == Global.TEXT_ARG) elem.text else elem.getAttribute(attr)
+        return if (attr == Global.TEXT_ARG) elem.text else elem.getAttribute(attr)
     }
 
     override fun getAttrs(selector: BaseSelector, attr: String): Collection<String> {
@@ -34,18 +41,30 @@ open class SeleniumExecutor(
     override fun isPresent(selector: ISelector): Boolean {
         webDriver.manage().timeouts().implicitlyWait(0, TimeUnit.MILLISECONDS)
         val res = selector.webElements.isNotEmpty()
-        webDriver.manage().timeouts().implicitlyWait(30000, TimeUnit.MILLISECONDS)
+        webDriver.manage().timeouts().implicitlyWait(Global.WAIT_FOR_ELEMENT_TIMEOUT.toMillis(), TimeUnit.MILLISECONDS)
 
         return res
     }
 
-    private val ISelector.webElement: WebElement
-        get() {
-            return webDriver.findElement(By.xpath(this.toXpath()))
-        }
+    protected open fun executeAction(action: WaitForSelectorAction) {
+        val wait = WebDriverWait(webDriver, Global.WAIT_FOR_ELEMENT_TIMEOUT.seconds)
+        wait.until(
+            ExpectedConditions.visibilityOfElementLocated(
+                By.xpath(
+                    action.selector.toXpath()
+                )
+            )
+        )
+    }
 
-    private val ISelector.webElements: Collection<WebElement>
-        get() {
-            return  webDriver.findElements(By.xpath(this.toXpath()))
-        }
+    protected open fun executeAction(action: WaitForSelectorDisappearAction) {
+        val wait = WebDriverWait(webDriver, Global.WAIT_FOR_ELEMENT_TIMEOUT.seconds)
+        wait.until(
+            ExpectedConditions.invisibilityOfElementLocated(
+                By.xpath(
+                    action.selector.toXpath()
+                )
+            )
+        )
+    }
 }

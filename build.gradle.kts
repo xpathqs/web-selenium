@@ -1,7 +1,7 @@
 
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-version = "0.0.2"
+version = "0.0.4"
 
 plugins {
     kotlin("jvm") version "1.5.0"
@@ -25,19 +25,25 @@ jacoco {
 }
 
 repositories {
+    mavenLocal()
     mavenCentral()
 }
 
 dependencies {
-    api("org.xpathqs:xpathqs-web:0.0.1")
+    api("org.xpathqs:xpathqs-web:0.0.3")
+    api("org.xpathqs:xpathqs-driver:0.0.3")
+    api("org.xpathqs:xpathqs-core:0.0.2")
+
+    api("org.seleniumhq.selenium:selenium-java:3.141.59")
+    api("io.github.bonigarcia:webdrivermanager:4.4.1")
 
     implementation(kotlin("stdlib"))
 
     implementation("net.sourceforge.nekohtml:nekohtml:1.9.22")
-    implementation("org.seleniumhq.selenium:selenium-java:3.141.59")
-    implementation("io.github.bonigarcia:webdrivermanager:4.4.1")
 
     testImplementation(kotlin("test-junit5"))
+    implementation("org.mockito:mockito-core:2.1.0")
+    testImplementation("com.willowtreeapps.assertk:assertk-jvm:0.23.1")
 }
 
 publishing {
