@@ -1,7 +1,7 @@
 
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-version = "0.0.4"
+version = "0.0.5"
 
 plugins {
     kotlin("jvm") version "1.5.0"
@@ -30,9 +30,9 @@ repositories {
 }
 
 dependencies {
-    api("org.xpathqs:xpathqs-web:0.0.3")
-    api("org.xpathqs:xpathqs-driver:0.0.3")
-    api("org.xpathqs:xpathqs-core:0.0.2")
+    api("org.xpathqs:xpathqs-web:+")
+    api("org.xpathqs:xpathqs-driver:+")
+    api("org.xpathqs:xpathqs-core:+")
 
     api("org.seleniumhq.selenium:selenium-java:3.141.59")
     api("io.github.bonigarcia:webdrivermanager:4.4.1")
