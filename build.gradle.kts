@@ -1,7 +1,7 @@
 
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-version = "0.0.7"
+version = "0.1.0"
 
 plugins {
     kotlin("jvm") version "1.5.0"
@@ -30,10 +30,10 @@ repositories {
 }
 
 dependencies {
-    api("org.xpathqs:xpathqs-core:[0.0.4,)")
-    api("org.xpathqs:xpathqs-driver:[0.0.4,)")
-    api("org.xpathqs:xpathqs-web:[0.0.4,)")
-    api("org.xpathqs:xpathqs-log:[0.0.1,)")
+    api("org.xpathqs:core:0.0.7")
+    api("org.xpathqs:driver:0.1.0")
+    api("org.xpathqs:web:0.1.0")
+    api("org.xpathqs:log:0.1.0")
 
     api("org.seleniumhq.selenium:selenium-java:3.141.59")
     api("io.github.bonigarcia:webdrivermanager:4.4.1")
@@ -71,13 +71,13 @@ publishing {
                     }
                 }
                 scm {
-                    connection.set("scm:git:git://github.com/nachg/xpathqs-web-selenium.git")
-                    developerConnection.set("scm:git:ssh://github.com/nachg/xpathqs-web-selenium.git")
+                    connection.set("scm:git:git://github.com/xpathqs/web-selenium.git")
+                    developerConnection.set("scm:git:ssh://github.com/xpathqs/web-selenium.git")
                     url.set("https://xpathqs.org/")
                 }
             }
             groupId = "org.xpathqs"
-            artifactId = "xpathqs-web-selenium"
+            artifactId = "web-selenium"
 
             from(components["java"])
         }

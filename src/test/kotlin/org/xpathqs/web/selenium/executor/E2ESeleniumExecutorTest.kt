@@ -3,7 +3,8 @@ package org.xpathqs.web.selenium.executor
 import io.github.bonigarcia.wdm.config.DriverManagerType
 import org.junit.jupiter.api.Test
 import org.xpathqs.core.reflection.PackageScanner
-import org.xpathqs.core.selector.Block
+import org.xpathqs.core.selector.block.Block
+
 import org.xpathqs.core.selector.extensions.get
 import org.xpathqs.core.selector.extensions.plus
 import org.xpathqs.core.selector.extensions.prefix
@@ -14,7 +15,7 @@ import org.xpathqs.driver.executor.Executor
 import org.xpathqs.driver.extensions.clear
 import org.xpathqs.driver.extensions.input
 import org.xpathqs.driver.extensions.text
-import org.xpathqs.driver.log.ConsoleLog
+
 import org.xpathqs.driver.log.Log
 import org.xpathqs.web.Page
 import org.xpathqs.web.cache.HtmlCache
@@ -64,7 +65,7 @@ internal class E2ESeleniumExecutorTest {
             )
 
         Global.init(executor)
-        Log.init(ConsoleLog())
+      //  Log.init(ConsoleLog())
         PackageScanner("org.xpathqs.web.selenium.executor").scan()
     }
 
