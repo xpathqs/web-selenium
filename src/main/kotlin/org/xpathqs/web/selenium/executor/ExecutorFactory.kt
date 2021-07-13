@@ -17,7 +17,7 @@ class ExecutorFactory(
     val webDriver: SeleniumWebDriver = SeleniumWebDriver(driver)
 ) {
     constructor(type: DriverManagerType) : this(
-        DriverFactory.create(type)
+        DriverFactory.default.create()
     )
 
     fun getCached(): SeleniumCachedExecutor {

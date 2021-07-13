@@ -3,6 +3,7 @@ package org.xpathqs.web.selenium.executor
 import org.openqa.selenium.By
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.WebElement
+import org.openqa.selenium.interactions.Actions
 import org.xpathqs.core.selector.base.ISelector
 import org.xpathqs.core.selector.selector.Selector
 import org.xpathqs.driver.actions.ClickAction
@@ -25,7 +26,14 @@ open class SeleniumBaseExecutor(
     }
 
     protected open fun executeAction(action: ClickAction) {
-        driver.click(action.on)
+        if(action.moveMouse) {
+            val el = action.on.toWebElement()
+            val builder = Actions(webDriver)
+            builder.moveToElement(el).click(el)
+            builder.perform()
+        } else {
+            driver.click(action.on)
+        }
     }
 
     protected open fun executeAction(action: InputAction) {
@@ -41,4 +49,8 @@ open class SeleniumBaseExecutor(
         get() {
             return webDriver.findElements(By.xpath(this.toXpath()))
         }
+
+    private fun ISelector.toWebElement(): WebElement {
+        return webDriver.findElement(By.xpath(this.toXpath()))
+    }
 }
