@@ -1,37 +1,28 @@
-package org.xpathqs.web.selenium.executor
+package org.xpathqs.web.selenium.executor.e2e.google
 
-import io.github.bonigarcia.wdm.config.DriverManagerType
 import org.junit.jupiter.api.Test
 import org.xpathqs.core.constants.CoreGlobalProps
-import org.xpathqs.core.reflection.PackageScanner
+import org.xpathqs.core.reflection.scanPackage
+import org.xpathqs.core.selector.base.BaseSelector
 import org.xpathqs.core.selector.block.Block
 import org.xpathqs.core.selector.extensions.core.get
 
 
 import org.xpathqs.core.selector.extensions.plus
 import org.xpathqs.core.selector.extensions.repeat
-import org.xpathqs.core.selector.extensions.withAttribute
 import org.xpathqs.core.selector.extensions.withAttributeValue
 import org.xpathqs.core.selector.selector.prefix
 import org.xpathqs.core.util.SelectorFactory.idSelector
-import org.xpathqs.driver.executor.CachedExecutor
-import org.xpathqs.driver.executor.Executor
 import org.xpathqs.driver.extensions.clear
 import org.xpathqs.driver.extensions.input
 import org.xpathqs.driver.extensions.text
 import org.xpathqs.driver.extensions.waitForVisible
 
 import org.xpathqs.driver.log.Log
+import org.xpathqs.driver.navigation.NavExecutor
+import org.xpathqs.driver.navigation.Navigator
 import org.xpathqs.log.BaseLogger
-import org.xpathqs.log.printers.StreamLogPrinter
-import org.xpathqs.log.printers.args.TagArgsProcessor
-import org.xpathqs.log.printers.args.TimeArgsProcessor
-import org.xpathqs.log.printers.body.BodyProcessorImpl
-import org.xpathqs.log.printers.body.HierarchyBodyProcessor
-import org.xpathqs.web.Page
-import org.xpathqs.web.cache.HtmlCache
-import org.xpathqs.web.executor.CachedWebExecutor
-import org.xpathqs.web.executor.WebExecutor
+
 import org.xpathqs.web.extensions.submit
 import org.xpathqs.web.factory.HTML
 import org.xpathqs.web.factory.HtmlTags
@@ -39,34 +30,44 @@ import org.xpathqs.web.factory.HtmlTags.DIV
 import org.xpathqs.web.factory.HtmlTags.H3
 import org.xpathqs.web.selenium.constants.Global
 import org.xpathqs.web.selenium.driver.SeleniumWebDriver
+import org.xpathqs.web.selenium.executor.ExecutorFactory
+import org.xpathqs.web.selenium.executor.e2e.github.base.Page
 import org.xpathqs.web.selenium.factory.DriverFactory
 
 
-object GoogleSearch : Page(url = "https://www.google.com") {
+object GoogleSearch : Page(
+    baseUrl = "https://www.google.com",
+) {
     val searchInput = HtmlTags.INPUT.withAttributeValue("Search")
-    val btnSubmit = HTML.submit()
 
-    fun searchInput(value: String) {
+    fun search(value: String) {
         searchInput
-            .clear()
             .input(value)
             .submit()
     }
 
-    object Results : Block(idSelector("search") + DIV.prefix("/").repeat(3)) {
+    object Results : Block(
+        idSelector("search") + DIV.prefix("/").repeat(3)
+    ) {
         val lblTitle = H3
         val lblDesc = DIV[2]
     }
 }
 
+object Nav: Navigator()
+
 internal class E2ESeleniumExecutorTest {
 
     private fun defaultSetup() {
+        System.setProperty("i18n", "ru")
         val driver = DriverFactory().create()
         val webDriver = SeleniumWebDriver(driver)
 
-        val executor =
-            ExecutorFactory(driver, webDriver).getCached()
+        val executor =/* NavExecutor(
+            ExecutorFactory(driver, webDriver).getCached(),
+            Nav
+        )*/
+                ExecutorFactory(driver, webDriver).getCached()
 
         Global.init(executor)
 
@@ -78,26 +79,42 @@ internal class E2ESeleniumExecutorTest {
 
         Log.log = traceLog
 
-        PackageScanner("org.xpathqs.web.selenium.executor").scan()
+        scanPackage(this)
+    }
+
+    @Test
+    fun tt() {
+        print(GoogleSearch.searchInput)
+        print(GoogleSearch.Results)
+        print(GoogleSearch.Results.lblTitle)
+        print(GoogleSearch.Results.lblDesc)
+        print(GoogleSearch.Results[2].lblTitle)
+    }
+
+    fun print(sel: BaseSelector) {
+        println(sel.name)
+        println(sel.xpath)
+        println()
     }
 
     @Test
     fun test1() {
+
         defaultSetup()
 
         GoogleSearch.open()
-        GoogleSearch.searchInput("Wiki")
+        GoogleSearch.search("Wiki")
       //  Thread.sleep(5000)
 
         //toXpath используется в логах...
-        GoogleSearch.Results[2].lblTitle.waitForVisible()
+        GoogleSearch.Results.lblTitle.waitForVisible()
 
 
 
-     //   val s1 = GoogleSearch.Results.lblTitle.text
+        val s1 = GoogleSearch.Results.lblTitle.text
         val s2 = GoogleSearch.Results[2].lblTitle.text
 
-     //   println(s1)
+        println(s1)
         println(s2)
     }
 }

@@ -46,6 +46,10 @@ open class SeleniumExecutor(
         return res
     }
 
+    override fun getElementsCount(selector: ISelector): Int {
+        return selector.webElements.size
+    }
+
     protected open fun executeAction(action: WaitForSelectorAction) {
         val wait = WebDriverWait(webDriver, Global.WAIT_FOR_ELEMENT_TIMEOUT.seconds)
         wait.until(

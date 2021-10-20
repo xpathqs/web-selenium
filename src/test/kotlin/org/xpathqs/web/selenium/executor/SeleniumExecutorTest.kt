@@ -8,7 +8,7 @@ import org.xpathqs.core.util.SelectorFactory.tagSelector
 import org.xpathqs.driver.actions.ClickAction
 import org.xpathqs.driver.actions.WaitAction
 import org.xpathqs.driver.executor.Executor
-import org.xpathqs.web.Page
+import org.xpathqs.web.WebPage
 import org.xpathqs.web.actions.OpenUrlAction
 import org.xpathqs.web.executor.WebExecutor
 import org.xpathqs.web.selenium.constants.Global
@@ -44,14 +44,14 @@ class SeleniumExecutorTest {
     @Test
     fun hasActionHandlerForOpenUrlAction() {
         assertThat(
-            executor.hasActionHandler(OpenUrlAction(Page()))
+            executor.hasActionHandler(OpenUrlAction(WebPage()))
         ).isEqualTo(true)
     }
 
     @Test
     fun actionHandlerForOpenUrlAction() {
         assertThat(
-            executor.getActionHandler(OpenUrlAction(Page()))
+            executor.getActionHandler(OpenUrlAction(WebPage()))
         ).isNotNull()
     }
 
@@ -68,6 +68,6 @@ class SeleniumExecutorTest {
 
     @Test
     fun open() {
-        Page("").open()
+        WebPage().open()
     }
 }

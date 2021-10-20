@@ -6,6 +6,4 @@ import org.xpathqs.driver.executor.Decorator
 open class SeleniumCachedExecutor(
     webDriver: WebDriver,
     origin: Decorator
-) : SeleniumBaseExecutor(webDriver, origin) {
-    /* */
-}
+) : SeleniumBaseExecutor(webDriver, origin)

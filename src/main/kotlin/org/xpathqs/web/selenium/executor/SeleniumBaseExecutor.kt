@@ -1,15 +1,21 @@
 package org.xpathqs.web.selenium.executor
 
 import org.openqa.selenium.By
+import org.openqa.selenium.JavascriptExecutor
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.WebElement
 import org.openqa.selenium.interactions.Actions
 import org.xpathqs.core.selector.base.ISelector
 import org.xpathqs.core.selector.selector.Selector
 import org.xpathqs.driver.actions.ClickAction
-import org.xpathqs.driver.actions.InputAction
+import org.xpathqs.driver.actions.ScreenShotAction
 import org.xpathqs.driver.executor.ActionExecMap
 import org.xpathqs.driver.executor.Decorator
+import org.xpathqs.driver.log.Log
+import org.xpathqs.web.selenium.util.Screenshot
+import java.io.ByteArrayOutputStream
+import javax.imageio.ImageIO
+
 
 open class SeleniumBaseExecutor(
     val webDriver: WebDriver,
@@ -20,8 +26,8 @@ open class SeleniumBaseExecutor(
         set(ClickAction(Selector()).name) {
             executeAction(it as ClickAction)
         }
-        set(InputAction("", Selector()).name) {
-            executeAction(it as InputAction)
+        set(ScreenShotAction(Selector()).name) {
+            executeAction(it as ScreenShotAction)
         }
     }
 
@@ -36,8 +42,21 @@ open class SeleniumBaseExecutor(
         }
     }
 
-    protected open fun executeAction(action: InputAction) {
-        driver.input(action.on, action.text)
+    protected open fun executeAction(action: ScreenShotAction) {
+        val sc = Screenshot(webDriver)
+        val elem = action.sel.toWebElement()
+        (webDriver as JavascriptExecutor).executeScript(
+            "arguments[0].scrollIntoView({block: 'center', behavior: 'smooth'});",
+            elem)
+        Thread.sleep(500)
+
+        val bi = if(action.boundRect) sc.take(action.sel.toWebElement().rect) else sc.take()
+
+        val baos = ByteArrayOutputStream()
+        ImageIO.write(bi, "png", baos)
+        val bytes = baos.toByteArray()
+
+        Log.attachment(bytes.toTypedArray())
     }
 
     protected val ISelector.webElement: WebElement
