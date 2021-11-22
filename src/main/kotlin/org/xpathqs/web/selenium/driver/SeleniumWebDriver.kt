@@ -7,6 +7,11 @@ import org.openqa.selenium.support.ui.WebDriverWait
 import org.xpathqs.core.selector.base.BaseSelector
 import org.xpathqs.core.selector.base.ISelector
 import org.xpathqs.core.selector.base.findAnnotation
+import org.xpathqs.core.selector.block.Block
+import org.xpathqs.core.selector.block.findWithAnnotation
+import org.xpathqs.core.selector.extensions.rootParent
+import org.xpathqs.core.selector.extensions.text
+import org.xpathqs.driver.extensions.click
 import org.xpathqs.driver.log.Log
 import org.xpathqs.driver.navigation.annotations.UI
 import org.xpathqs.web.selenium.constants.Global
@@ -52,7 +57,7 @@ open class SeleniumWebDriver(
             }
             try {
                 elem.click()
-            }catch (e: ElementClickInterceptedException) {
+            }catch (e: Exception) {
                 val elem = selector.toWebElement()
                 elem.click()
             }
@@ -60,6 +65,18 @@ open class SeleniumWebDriver(
     }
 
     override fun input(selector: ISelector, value: String) {
+        if(selector is Block) {
+            val select = selector.findWithAnnotation(UI.Widgets.Select::class)
+            if(select != null) {
+                selector.findWithAnnotation(UI.Widgets.OptionItem::class)!!.text(value).click()
+                return
+            }
+            if(selector.findWithAnnotation(UI.Widgets.Input::class) != null){
+                input(selector.findWithAnnotation(UI.Widgets.Input::class)!!, value)
+                return
+            }
+        }
+
         try {
             selector.toWebElement().sendKeys(value)
         } catch (e: Exception) {
@@ -87,6 +104,14 @@ open class SeleniumWebDriver(
 
     override fun submit(selector: ISelector) {
         selector.toWebElement().submit()
+    }
+
+    override fun switchTab() {
+        val currentHandle = driver.windowHandle
+        val otherHandle = driver.windowHandles.filter { it != currentHandle }.firstOrNull()
+        otherHandle?.let {
+            driver.switchTo().window(it)
+        }
     }
 
     private fun ISelector.toWebElement(): WebElement {
