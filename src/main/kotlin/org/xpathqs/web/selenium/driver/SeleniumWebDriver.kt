@@ -7,6 +7,7 @@ import org.openqa.selenium.support.ui.WebDriverWait
 import org.xpathqs.core.selector.base.BaseSelector
 import org.xpathqs.core.selector.base.ISelector
 import org.xpathqs.core.selector.base.findAnnotation
+import org.xpathqs.core.selector.base.hasAnnotation
 import org.xpathqs.core.selector.block.Block
 import org.xpathqs.core.selector.block.findWithAnnotation
 import org.xpathqs.core.selector.extensions.rootParent
@@ -38,6 +39,16 @@ open class SeleniumWebDriver(
 
     override fun click(selector: ISelector) {
         try {
+            if(selector is BaseSelector) {
+                if(selector.hasAnnotation(UI.Widgets.DropdownItem::class)) {
+                    eval {
+                        (driver as JavascriptExecutor).executeScript(
+                            "arguments[0].scrollIntoView({block: 'center', behavior: 'smooth'});",
+                            selector.toWebElement())
+                        Thread.sleep(500)
+                    }
+                }
+            }
             selector.toWebElement().click()
         } catch (e: Exception) {
             val t = WebDriverWait(driver, Global.WAIT_FOR_ELEMENT_TIMEOUT.seconds)

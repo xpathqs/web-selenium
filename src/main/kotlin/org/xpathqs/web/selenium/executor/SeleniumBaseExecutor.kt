@@ -44,13 +44,15 @@ open class SeleniumBaseExecutor(
 
     protected open fun executeAction(action: ScreenShotAction) {
         val sc = Screenshot(webDriver)
-        val elem = action.sel.toWebElement()
-        (webDriver as JavascriptExecutor).executeScript(
-            "arguments[0].scrollIntoView({block: 'center', behavior: 'smooth'});",
-            elem)
-        Thread.sleep(500)
+        val bi = if(action.boundRect) {
+            val elem = action.sel.toWebElement()
+            (webDriver as JavascriptExecutor).executeScript(
+                "arguments[0].scrollIntoView({block: 'center', behavior: 'smooth'});",
+                elem)
+            Thread.sleep(500)
 
-        val bi = if(action.boundRect) sc.take(action.sel.toWebElement().rect) else sc.take()
+            sc.take(action.sel.toWebElement().rect)
+        } else sc.take()
 
         val baos = ByteArrayOutputStream()
         ImageIO.write(bi, "png", baos)

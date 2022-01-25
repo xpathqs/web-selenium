@@ -13,18 +13,18 @@ open class SeleniumGlobalCls : WebGlobalCls() {
                 ?: "5000").toLong()
         )
 
-    internal lateinit var webDriver: WebDriver
+    val webDriver = ThreadLocal<WebDriver>()
 
     fun init(executor: IExecutor) {
-        this.executor = executor
+        this.localExecutor.set(executor)
 
         (executor as? SeleniumExecutor)?.let {
-            Global.webDriver = it.webDriver
+            webDriver.set(it.webDriver)
         }
 
-        Global.executor = executor
-        org.xpathqs.driver.constants.Global.executor = executor
-        org.xpathqs.web.constants.Global.executor = executor
+        Global.localExecutor.set(executor)
+        org.xpathqs.driver.constants.Global.localExecutor.set(executor)
+        org.xpathqs.web.constants.Global.localExecutor.set(executor)
     }
 }
 
