@@ -10,7 +10,6 @@ import org.xpathqs.core.selector.base.findAnnotation
 import org.xpathqs.core.selector.base.hasAnnotation
 import org.xpathqs.core.selector.block.Block
 import org.xpathqs.core.selector.block.findWithAnnotation
-import org.xpathqs.core.selector.extensions.rootParent
 import org.xpathqs.core.selector.extensions.text
 import org.xpathqs.driver.extensions.click
 import org.xpathqs.driver.log.Log
@@ -50,6 +49,14 @@ open class SeleniumWebDriver(
                 }
             }
             selector.toWebElement().click()
+            /*try {
+                selector.toWebElement().click()
+            }catch (e: ElementClickInterceptedException) {
+                val elem = selector.toWebElement()
+                val p: Point = elem.location
+                val actions = Actions(driver)
+                actions.moveToElement(elem).click().perform()
+            }*/
         } catch (e: Exception) {
             val t = WebDriverWait(driver, Global.WAIT_FOR_ELEMENT_TIMEOUT.seconds)
             val elem = selector.toWebElement()
@@ -70,7 +77,13 @@ open class SeleniumWebDriver(
                 elem.click()
             }catch (e: Exception) {
                 val elem = selector.toWebElement()
-                elem.click()
+                try {
+                    elem.click()
+                } catch (e: ElementClickInterceptedException) {
+                    val p: Point = elem.location
+                    val actions = Actions(driver)
+                    actions.moveToElement(elem).click().perform()
+                }
             }
         }
     }

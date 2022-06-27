@@ -10,7 +10,7 @@ import org.xpathqs.core.selector.extensions.core.get
 
 import org.xpathqs.core.selector.extensions.plus
 import org.xpathqs.core.selector.extensions.repeat
-import org.xpathqs.core.selector.extensions.withAttributeValue
+import org.xpathqs.core.selector.extensions.withAttribute
 import org.xpathqs.core.selector.selector.prefix
 import org.xpathqs.core.util.SelectorFactory.idSelector
 import org.xpathqs.driver.extensions.clear
@@ -38,7 +38,7 @@ import org.xpathqs.web.selenium.factory.DriverFactory
 object GoogleSearch : Page(
     baseUrl = "https://www.google.com",
 ) {
-    val searchInput = HtmlTags.INPUT.withAttributeValue("Search")
+    val searchInput = HtmlTags.INPUT.withAttribute (value = "Search")
 
     fun search(value: String) {
         searchInput
