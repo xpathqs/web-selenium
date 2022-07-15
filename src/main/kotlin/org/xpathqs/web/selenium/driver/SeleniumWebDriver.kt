@@ -59,7 +59,21 @@ open class SeleniumWebDriver(
             }*/
         } catch (e: Exception) {
             val t = WebDriverWait(driver, Global.WAIT_FOR_ELEMENT_TIMEOUT.seconds)
-            val elem = selector.toWebElement()
+
+            var elem = driver.findElements(By.xpath(selector.toXpath())).firstOrNull {
+                it.isDisplayed
+            }
+
+            if(elem == null) {
+                Thread.sleep(2000)
+                elem = driver.findElements(By.xpath(selector.toXpath())).firstOrNull {
+                    it.isDisplayed
+                }
+
+                if(elem == null) {
+                    throw Exception("No displayed element of $selector")
+                }
+            }
 
             eval {
                 (driver as JavascriptExecutor).executeScript(

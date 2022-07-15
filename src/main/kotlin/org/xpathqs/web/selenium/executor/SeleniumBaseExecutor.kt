@@ -11,6 +11,7 @@ import org.xpathqs.driver.actions.ClickAction
 import org.xpathqs.driver.actions.ScreenShotAction
 import org.xpathqs.driver.executor.ActionExecMap
 import org.xpathqs.driver.executor.Decorator
+import org.xpathqs.driver.extensions.screenshot
 import org.xpathqs.driver.log.Log
 import org.xpathqs.web.selenium.util.Screenshot
 import java.io.ByteArrayOutputStream
@@ -32,17 +33,24 @@ open class SeleniumBaseExecutor(
     }
 
     protected open fun executeAction(action: ClickAction) {
-        if(action.moveMouse) {
-            val el = action.on.toWebElement()
-            val builder = Actions(webDriver)
-            builder.moveToElement(el).click(el)
-            builder.perform()
-        } else {
-            driver.click(action.on)
+        Log.step(action.toStyledString()) {
+            action.on.screenshot()
+            if(action.moveMouse) {
+                val el = action.on.toWebElement()
+                val builder = Actions(webDriver)
+                builder.moveToElement(el).click(el)
+                builder.perform()
+            } else {
+                driver.click(action.on)
+            }
         }
     }
 
     protected open fun executeAction(action: ScreenShotAction) {
+        if(!enableScreenshots) {
+            return
+        }
+
         val sc = Screenshot(webDriver)
         val bi = if(action.boundRect) {
             val elem = action.sel.toWebElement()
@@ -73,5 +81,9 @@ open class SeleniumBaseExecutor(
 
     private fun ISelector.toWebElement(): WebElement {
         return webDriver.findElement(By.xpath(this.toXpath()))
+    }
+
+    companion object {
+        val enableScreenshots = (System.getenv("enableScreenshots") ?: "false").toBoolean()
     }
 }
