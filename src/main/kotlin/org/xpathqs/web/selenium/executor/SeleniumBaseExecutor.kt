@@ -35,6 +35,7 @@ open class SeleniumBaseExecutor(
     protected open fun executeAction(action: ClickAction) {
         Log.step(action.toStyledString()) {
             action.on.screenshot()
+
             if(action.moveMouse) {
                 val el = action.on.toWebElement()
                 val builder = Actions(webDriver)
@@ -46,8 +47,25 @@ open class SeleniumBaseExecutor(
         }
     }
 
+    open fun getAbsY(driver: WebDriver, element: WebElement?): Int {
+        val y = (driver as JavascriptExecutor).executeScript(
+            "return arguments[0].getBoundingClientRect().top", element
+        )
+        val res = y as? Long ?: y as Double
+        return res.toInt()
+    }
+
+
+    open fun getAbsX(driver: WebDriver, element: WebElement?): Int {
+        val x = (driver as JavascriptExecutor).executeScript(
+            "return arguments[0].getBoundingClientRect().left", element
+        )
+        val res = x as? Long ?: x as Double
+        return res.toInt()
+    }
+
     protected open fun executeAction(action: ScreenShotAction) {
-        if(!enableScreenshots) {
+        if(disableAllScreenshots || !enableScreenshots) {
             return
         }
 
@@ -55,11 +73,17 @@ open class SeleniumBaseExecutor(
         val bi = if(action.boundRect) {
             val elem = action.sel.toWebElement()
             (webDriver as JavascriptExecutor).executeScript(
-                "arguments[0].scrollIntoView({block: 'center', behavior: 'smooth'});",
+                "arguments[0].scrollIntoView({block: 'center'});",
                 elem)
-            Thread.sleep(500)
+            //Thread.sleep(1000)
+            val r = action.sel.toWebElement().rect
 
-            sc.take(action.sel.toWebElement().rect)
+            val absY = getAbsY(webDriver, action.sel.toWebElement())
+            val absX = getAbsX(webDriver, action.sel.toWebElement())
+
+            r.y = absY
+            r.x = absX
+            sc.take(r)
         } else sc.take()
 
         val baos = ByteArrayOutputStream()
@@ -80,10 +104,17 @@ open class SeleniumBaseExecutor(
         }
 
     private fun ISelector.toWebElement(): WebElement {
-        return webDriver.findElement(By.xpath(this.toXpath()))
+        try {
+            return webDriver.findElement(By.xpath(this.toXpath()))
+        } catch (e: Exception) {
+            Log.error("Element can't be found by xpath:")
+            Log.xpath(this.toXpath())
+            throw e
+        }
     }
 
     companion object {
-        val enableScreenshots = (System.getenv("enableScreenshots") ?: "false").toBoolean()
+        var enableScreenshots = true//(System.getenv("enableScreenshots") ?: "false").toBoolean()
+        var disableAllScreenshots = true
     }
 }

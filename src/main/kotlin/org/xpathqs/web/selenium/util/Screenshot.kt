@@ -1,9 +1,6 @@
 package org.xpathqs.web.selenium.util
 
-import org.openqa.selenium.OutputType
-import org.openqa.selenium.Rectangle
-import org.openqa.selenium.TakesScreenshot
-import org.openqa.selenium.WebDriver
+import org.openqa.selenium.*
 import java.awt.BasicStroke
 import java.awt.Color
 import java.awt.image.BufferedImage
@@ -21,37 +18,41 @@ class Screenshot(
     }
 
     fun take(rect: Rectangle): BufferedImage {
-        val newBi = take()
+       /* val bytes = driver.findElement(By.xpath("//")).getScreenshotAs(OutputType.BYTES)
+
+        val input = ByteArrayInputStream(bytes)*/
+        val newBi =  take()//ImageIO.read(input)
 
         val driverSize = driver.manage().window().size
-        val d = newBi.width / driverSize.width
+        val dw = newBi.width.toDouble() / driverSize.width.toDouble()
+        val dh = dw//newBi.height.toDouble() / driverSize.height.toDouble()
 
         val g = newBi.createGraphics()
-        g.stroke = BasicStroke(20F);
+        g.stroke = BasicStroke(10F);
         g.color = Color.BLACK
         g.drawRect(
-            (rect.x * d),
-            (rect.y * d),
-            (rect.width * d+1),
-            (rect.height * d+1)
+            (rect.x * dw).toInt(),
+            (rect.y * dh).toInt(),
+            (rect.width * dw+1).toInt(),
+            (rect.height * dh+1).toInt()
         )
 
-        g.stroke = BasicStroke(15F);
+        g.stroke = BasicStroke(5F);
         g.color = Color.MAGENTA
         g.drawRect(
-            (rect.x * d),
-            (rect.y * d),
-            (rect.width * d),
-            (rect.height * d)
+            (rect.x * dw).toInt(),
+            (rect.y * dh).toInt(),
+            (rect.width * dw).toInt(),
+            (rect.height * dh).toInt()
         )
 
-        g.stroke = BasicStroke(3F);
+        g.stroke = BasicStroke(2F);
         g.color = Color.WHITE
         g.drawRect(
-            (rect.x * d),
-            (rect.y * d),
-            (rect.width * d),
-            (rect.height * d)
+            (rect.x * dw).toInt(),
+            (rect.y * dh).toInt(),
+            (rect.width * dw).toInt(),
+            (rect.height * dh).toInt()
         )
 
         return newBi
