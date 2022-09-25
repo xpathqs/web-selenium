@@ -19,7 +19,7 @@ open class SeleniumCachedExecutor(
 
         if(attr == "value") {
             val elem = selector.webElement
-            return if (attr == Global.TEXT_ARG) elem.text else elem.getAttribute(attr)
+            return if (attr == Global.TEXT_ARG) elem.text else elem.getAttribute(attr) ?: ""
         }
 
         throw Exception("No '$attr' attribute for the $selector")

@@ -6,15 +6,20 @@ import org.openqa.selenium.WebDriver
 import org.openqa.selenium.chrome.ChromeDriver
 import org.openqa.selenium.chrome.ChromeOptions
 import org.openqa.selenium.remote.DesiredCapabilities
+import org.xpathqs.driver.log.Log
 
 class DriverFactory(
     val type: DriverManagerType = DriverManagerType.CHROME,
-    val version: String = "latest",
+    val version: String = "104.0.5112.79",
     val capabilities: DesiredCapabilities = DesiredCapabilities.chrome()
 ) {
 
     fun create(): WebDriver {
-        WebDriverManager.getInstance(type).driverVersion(version).setup()
+        try {
+            WebDriverManager.getInstance(type).driverVersion(version).setup()
+        } catch (e: Exception) {
+            Log.error(e.message ?: e.toString())
+        }
         return if(type == DriverManagerType.CHROME) {
             ChromeDriver(capabilities)
         } else {
