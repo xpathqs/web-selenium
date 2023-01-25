@@ -11,7 +11,7 @@ import org.xpathqs.driver.log.Log
 class DriverFactory(
     val type: DriverManagerType = DriverManagerType.CHROME,
     val version: String = "104.0.5112.79",
-    val capabilities: DesiredCapabilities = DesiredCapabilities.chrome()
+    val options: ChromeOptions = ChromeOptions()
 ) {
 
     fun create(): WebDriver {
@@ -21,7 +21,7 @@ class DriverFactory(
             Log.error(e.message ?: e.toString())
         }
         return if(type == DriverManagerType.CHROME) {
-            ChromeDriver(capabilities)
+            ChromeDriver(options)
         } else {
             val driverClass = Class.forName(type.browserClass())
             driverClass.getDeclaredConstructor().newInstance() as WebDriver
@@ -31,18 +31,17 @@ class DriverFactory(
     companion object {
         val default: DriverFactory
             get() = DriverFactory(
-                capabilities = getCapabilities()
+                options = getCapabilities()
             )
 
-        private fun getCapabilities(): DesiredCapabilities {
-            val caps = DesiredCapabilities.chrome()
+        private fun getCapabilities(): ChromeOptions {
 
             val options = ChromeOptions()
             options.addArguments("--allow-insecure-localhost")
-            caps.setCapability(ChromeOptions.CAPABILITY, options)
-            caps.setCapability("acceptInsecureCerts", true)
+            options.setCapability(ChromeOptions.CAPABILITY, options)
+            options.setCapability("acceptInsecureCerts", true)
 
-            return caps
+            return options
         }
     }
 }

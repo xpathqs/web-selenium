@@ -13,7 +13,7 @@ import org.xpathqs.web.factory.HtmlTags.P
 import org.xpathqs.web.selenium.executor.e2e.github.base.Page
 import org.xpathqs.web.selenium.executor.e2e.github.pages.common.menu.Header
 
-@UI.Nav.PathTo(contains = [Header::class])
+//@UI.Nav.PathTo(contains = [Header::class])
 @UI.Nav.Order(type = NavOrderType.LOW)
 object MainPage: Page() {
 

@@ -81,6 +81,10 @@ open class MkTargetLocator : WebDriver.TargetLocator {
         return MkWebDriver()
     }
 
+    override fun newWindow(typeHint: WindowType?): WebDriver {
+        TODO("Not yet implemented")
+    }
+
     override fun defaultContent(): WebDriver {
         return MkWebDriver()
     }
@@ -179,37 +183,12 @@ open class MkOptions : WebDriver.Options {
         return MkTimeouts()
     }
 
-    override fun ime(): WebDriver.ImeHandler {
-        return MkImeHandler()
-    }
-
     override fun window(): WebDriver.Window {
         return MkWindow()
     }
 
     override fun logs(): Logs {
         return MkLogs()
-    }
-
-}
-
-class MkImeHandler : WebDriver.ImeHandler {
-    override fun getAvailableEngines(): MutableList<String> {
-        return ArrayList()
-    }
-
-    override fun getActiveEngine(): String {
-        return ""
-    }
-
-    override fun isActivated(): Boolean {
-        return false
-    }
-
-    override fun deactivate() {
-    }
-
-    override fun activateEngine(engine: String?) {
     }
 
 }
@@ -230,6 +209,10 @@ class MkWindow : WebDriver.Window {
     }
 
     override fun maximize() {
+    }
+
+    override fun minimize() {
+        TODO("Not yet implemented")
     }
 
     override fun fullscreen() {

@@ -51,7 +51,7 @@ open class SeleniumExecutor(
     }
 
     protected open fun executeAction(action: WaitForSelectorAction) {
-        val wait = WebDriverWait(webDriver, Global.WAIT_FOR_ELEMENT_TIMEOUT.seconds)
+        val wait = WebDriverWait(webDriver, Global.WAIT_FOR_ELEMENT_TIMEOUT)
         wait.until(
             ExpectedConditions.visibilityOfElementLocated(
                 By.xpath(
@@ -62,7 +62,7 @@ open class SeleniumExecutor(
     }
 
     protected open fun executeAction(action: WaitForSelectorDisappearAction) {
-        val wait = WebDriverWait(webDriver, Global.WAIT_FOR_ELEMENT_TIMEOUT.seconds)
+        val wait = WebDriverWait(webDriver, Global.WAIT_FOR_ELEMENT_TIMEOUT)
         wait.until(
             ExpectedConditions.invisibilityOfElementLocated(
                 By.xpath(

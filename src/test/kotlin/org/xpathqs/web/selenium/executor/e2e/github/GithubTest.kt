@@ -31,8 +31,8 @@ class GithubTest: BaseUiTest() {
         scanPackage(this)
         GitHubNavigator.initNavigations()
 
-        println(
+       /* println(
             GitHubNavigator.findPath(MainPage, Features)
-        )
+        )*/
     }
 }

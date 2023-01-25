@@ -58,7 +58,7 @@ open class SeleniumWebDriver(
                 actions.moveToElement(elem).click().perform()
             }*/
         } catch (e: Exception) {
-            val t = WebDriverWait(driver, Global.WAIT_FOR_ELEMENT_TIMEOUT.seconds)
+            val t = WebDriverWait(driver, Global.WAIT_FOR_ELEMENT_TIMEOUT)
 
             var elem = driver.findElements(By.xpath(selector.toXpath())).firstOrNull {
                 it.isDisplayed

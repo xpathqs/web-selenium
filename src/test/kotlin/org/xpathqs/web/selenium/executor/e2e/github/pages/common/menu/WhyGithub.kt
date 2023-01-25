@@ -12,7 +12,7 @@ import org.xpathqs.web.selenium.executor.e2e.github.pages.features.Features
 object WhyGithub: Block(
     base = tagSelector("details").withAttribute("open") + HTML.div(cls = "dropdown-menu")
 ) {
-    @UI.Nav.PathTo(byClick = Features::class)
+    //@UI.Nav.PathTo(byClick = Features::class)
     val features = textContainsSelector("Features")
 }
 

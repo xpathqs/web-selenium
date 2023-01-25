@@ -15,7 +15,7 @@ import org.xpathqs.web.selenium.executor.e2e.github.base.Block
 object Search : Block(base = HEADER) {
     val input = HtmlTags.INPUT.arg("@aria-label", "Search GitHub")
 
-    @UI.Nav.PathTo(byInvoke = Results::class)
+    //@UI.Nav.PathTo(byInvoke = Results::class)
     fun search(input: String = "search") {
 
     }

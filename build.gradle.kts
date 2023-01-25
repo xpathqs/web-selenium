@@ -1,10 +1,10 @@
 
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-version = "0.1.3"
+version = "0.1.4"
 
 plugins {
-    kotlin("jvm") version "1.6.0"
+    kotlin("jvm") version "1.7.10"
     id("org.jetbrains.dokka") version "1.4.32"
     `java-library`
     jacoco
@@ -30,13 +30,14 @@ repositories {
 }
 
 dependencies {
-    api("org.xpathqs:core:0.1.3")
-    api("org.xpathqs:driver:0.1.3")
-    api("org.xpathqs:web:0.1.3")
-    api("org.xpathqs:log:0.1.3")
+    api("org.xpathqs:core:0.1.4")
+    api("org.xpathqs:driver:0.1.4")
+    api("org.xpathqs:web:0.1.4")
+    api("org.xpathqs:log:0.1.4")
 
-    api("org.seleniumhq.selenium:selenium-java:3.141.59")
+    api("org.seleniumhq.selenium:selenium-java:4.7.2")
     api("io.github.bonigarcia:webdrivermanager:4.4.1")
+    api("org.seleniumhq.selenium:selenium-chrome-driver:4.7.2")
 
     implementation(kotlin("stdlib"))
 

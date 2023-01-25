@@ -9,6 +9,6 @@ import org.xpathqs.web.selenium.executor.e2e.github.base.Block
 
 object Header: Block(base = HEADER) {
 
-    @UI.Nav.PathTo(byClick = WhyGithub::class)
+    //@UI.Nav.PathTo(byClick = WhyGithub::class)
     val whyGithub = textContainsSelector("Why GitHub")
 }
